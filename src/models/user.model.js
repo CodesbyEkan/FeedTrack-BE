@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["user", "staff", "owner", "manager", "admin"],
     default: "user"
+  },
+  business: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Business"
   }
 }, { timestamps: true });
 
