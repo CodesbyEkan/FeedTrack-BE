@@ -47,7 +47,7 @@ export const createNewStaff = asyncHandler(async (req, res) => {
   // check if user already registers
   const userAlreadyExist = await findUserByEmail(email);
   if (userAlreadyExist) {
-    return res.status(400).json({ success: false, message: "User already Exists"});
+    return res.status(400).json({ success: false, message: "User already exists"});
   }
 
   const staff = await createUser({
@@ -58,7 +58,7 @@ export const createNewStaff = asyncHandler(async (req, res) => {
     business: businessId
   });
 
-  res.status(201).json({ success: true, message: "New staff created and assigned sucessfully", staff});
+  res.status(201).json({ success: true, message: "New staff created and assigned successfully", staff});
 
 });
 
@@ -85,7 +85,7 @@ export const login = asyncHandler(async (req, res) => {
 
 // logout user
 export const logout = asyncHandler(async (req, res) => {
-  res.clearCookie("accessToken", "", {
+  res.clearCookie("accessToken", {
     httpOnly: true,
     secure: ENV.NODE_ENV !== "development",
     sameSite: "strict"

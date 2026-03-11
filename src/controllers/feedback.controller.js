@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Feedback from "../models/feedback.model.js";
 import Notification from "../models/notification.model.js";
+import User from "../models/user.model.js";
 
 // create feed back
 export const createFeedback = asyncHandler(async (req, res) => {
@@ -71,7 +72,7 @@ export const assignFeedback = asyncHandler(async (req, res) => {
   // send notification to staff
   await Notification.create({
     recipient: staffId,
-    feeback: feedback._id,
+    feedback: feedback._id,
     type: "feedback_assigned"
   });
 
@@ -96,6 +97,7 @@ export const resolveFeedback = asyncHandler(async (req, res) => {
 });
 
 // todo:
+// generate qrcodes
 // get in-progress complaint
 // get resolved complaint
 // get open complaint
