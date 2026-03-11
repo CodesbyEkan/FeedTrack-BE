@@ -9,7 +9,7 @@ export const checkAuth = async (req, res, next) => {
       accessToken = req.headers.authorization.split(" ")[1];
     }
   
-    if (!acccessToken) {
+    if (!accessToken) {
       return res.status(401).json({ success: false, message: "Authentication is missing! Please login to access resource"});
     }
   
