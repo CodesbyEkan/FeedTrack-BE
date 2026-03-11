@@ -3,6 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
+import authRoute from "./routes/auth.route.js";
+import feedbackRoute from "./routes/feedback.route.js";
 
 const app = express();
 const PORT = ENV.PORT;
@@ -20,6 +22,9 @@ app.use(cors({
 app.get("/", (req, res) => {
   res.send("Welcome to Feedback Management");
 });
+
+app.use('/api/v1/auth', authRoute);
+app.use('/api/v1/feedback', feedbackRoute);
 
 app.listen(PORT, () => {
   // connect mongodb 

@@ -3,28 +3,18 @@ import mongoose from "mongoose";
 const businessSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Business name is required"]
+    required: true
   },
   type: {
     type: String,
-    required: [true, "Type is required"]
+    required: true
   },
-  location: String,
   phoneNo: String,
-  user: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  },
-  role: {
-    type: String,
-    enum: ["owner", "manager", "supervisor"]
-  },
-  staff: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  ]
+    ref: "User",
+    required: true
+  }
 }, { timestamps: true});
 
 const Business = mongoose.model("Business", businessSchema);

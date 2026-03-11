@@ -2,9 +2,11 @@ import asyncHandler from "express-async-handler";
 import { generateAndSetCookie } from "../utils/generateAndSetCookie.js";
 import { ENV } from "../config/env.js";
 import { createUser, findUserByEmail, findUserWithPassword } from "../services/auth.service.js";
+import Business from "../models/business.model.js";
 
-export const signup = asyncHandler(async (req, res) => {
-  const {name, email, password} = req.body;
+// signup business owner
+export const signupOwner = asyncHandler(async (req, res) => {
+  const {name, email, password, businessName, businessType, businessPhone } = req.body;
 
   // check if user already registers
   const userAlreadyExist = await findUserByEmail(email);
@@ -12,15 +14,55 @@ export const signup = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: "User already Exists"});
   }
 
-  const user = await createUser({
+  const owner = await createUser({
     name,
     email,
-    password
+    password,
+    role: "owner"
   });
 
-  generateAndSetCookie(user, 201, res);
+  const business = await Business.create({
+    name: businessName,
+    type: businessType,
+    phoneNo: businessPhone,
+    owner: owner._id
+  });
+
+  // assign business to owner
+  owner.business = business._id;
+  await owner.save()
+
+  generateAndSetCookie(owner, 201, res);
 });
 
+// create new staff logic
+export const createNewStaff = asyncHandler(async (req, res) => {
+  const { name, email, password } = req.body;
+  const businessId = req.user.business;
+
+  if (!businessId) {
+    return res.status(400).json({ success: false, message: "You dont have any business - please register"})
+  }
+
+  // check if user already registers
+  const userAlreadyExist = await findUserByEmail(email);
+  if (userAlreadyExist) {
+    return res.status(400).json({ success: false, message: "User already Exists"});
+  }
+
+  const staff = await createUser({
+    name,
+    email,
+    password,
+    role: "staff",
+    business: businessId
+  });
+
+  res.status(201).json({ success: true, message: "New staff created and assigned sucessfully", staff});
+
+});
+
+// login controller
 export const login = asyncHandler(async (req, res) => {
   const { email, password} = req.body;
 
@@ -41,6 +83,7 @@ export const login = asyncHandler(async (req, res) => {
   generateAndSetCookie(user, 200, res);
 });
 
+// logout user
 export const logout = asyncHandler(async (req, res) => {
   res.clearCookie("accessToken", "", {
     httpOnly: true,
@@ -51,6 +94,7 @@ export const logout = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully"});
 });
 
+// get presently authenticated user
 export const getMe = asyncHandler(async (req, res) => {
   const user = req.user;
   res.status(200).json({ success: true, user });

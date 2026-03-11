@@ -5,17 +5,17 @@ const feedbackSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Business"
   },
-  authorName: { 
+  guestName: { 
     type: String,
     required: true
   },
-  content: {
+  message: {
     type: String,
     required: true
   },
   status: {
     type: String,
-    enum: ["open", "in-progress", "closed"],
+    enum: ["open", "in-progress", "resolved"],
     default: 'open'
   },
   type: {
@@ -23,7 +23,18 @@ const feedbackSchema = new mongoose.Schema({
     enum: ["complaint", "compliment", "suggestion"],
     required: true    
   },
-  source: String
+  source: String,
+  assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null
+  },
+  notes: {
+    type: String
+  },
+  resolvedAt: {
+    type: Date
+  }
 }, 
 { timestamps: true } // for the createdAt & updatedAt fields
 );

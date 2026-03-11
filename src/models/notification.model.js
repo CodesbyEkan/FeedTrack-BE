@@ -1,29 +1,28 @@
 import mongoose from "mongoose"
 
 const notificationSchema = new mongoose.Schema({
-  recipient: {
+  recipient: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true
   },
-  sender: {
+  feedback: { // the feedback that triggered it
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Feedback",
     required: true
   },
   type: {
     type: String,
     enum: [
-      "feedback_assigned",
-      "feedback_replied",
-      "status_updated",
-      "feedback_recieved"
+      "new_feedback",
+      "complaint_assigned",
+      "complaint_resolved"
     ],
     required: true
   },
-  message: {
-    type: String,
-    required: true
+  read: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true});
 
