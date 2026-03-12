@@ -7,7 +7,6 @@ const feedbackSchema = new mongoose.Schema({
   },
   guestName: { 
     type: String,
-    required: true
   },
   message: {
     type: String,
