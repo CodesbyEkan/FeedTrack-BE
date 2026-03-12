@@ -96,14 +96,58 @@ export const resolveFeedback = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: "Feedback resolved successfully", feedback});
 });
 
+// get in-progress complaint
+export const getInProgressComplaints = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "in-progress" });
+  res.status(200).json({ success: true, complaints });
+});
+
+// get resolved complaint
+export const getResolvedComplaints = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "resolved" });
+  res.status(200).json({ success: true, complaints });
+});
+
+// get open complaint
+export const getOpenComplaints = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "open" });
+  res.status(200).json({ success: true, complaints });
+});
+
+// get your staff
+export const getYourStaff = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+
+  if (!businessId) return res.status(400).json({ success: false, message: "No business found" });
+
+  const business = await Business.findById(businessId).populate("staff", "name email role");
+
+  res.status(200).json({ success: true, staff: business.staff });
+});
+
+// get business feedback complaint
+export const getComplaints = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+  const complaints = await Feedback.find({ business: businessId, type: "complaint" });
+  res.status(200).json({ success: true, complaints });
+});
+
+// get business feedback compliment
+export const getCompliments = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+  const compliments = await Feedback.find({ business: businessId, type: "compliment" });
+  res.status(200).json({ success: true, compliments });
+});
+
+// get business feedback suggestions
+export const getSuggestions = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+  const suggestions = await Feedback.find({ business: businessId, type: "suggestion" });
+  res.status(200).json({ success: true, suggestions });
+});
+
 // todo:
 // generate qrcodes
-// get in-progress complaint
-// get resolved complaint
-// get open complaint
-// get your staff
-// get complaint
-// get compliment
-// get suggestion
-// get all notifications
-// get single notification
