@@ -5,7 +5,7 @@ import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import authRoute from "./routes/auth.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
-import qrRoutes from "./routes/qr.route.js";
+import qrRoutes from "./utils/generateQrcode.js";
 
 const app = express();
 const PORT = ENV.PORT;

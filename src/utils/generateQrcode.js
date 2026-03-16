@@ -1,5 +1,12 @@
 import express from "express";
-import { generateQRCode } from "../services/qr.Service.js";
+import QRCode from "qrcode";
+
+export async function generateQRCode(url) {
+  return await QRCode.toDataURL(url);
+}
+
+
+//import { generateQRCode } from "../services/qr.Service.js";
 
 const router = express.Router();
 
