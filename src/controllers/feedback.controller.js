@@ -52,7 +52,7 @@ export const getBusinessFeedbacks = asyncHandler(async (req, res) => {
 
 // assign complaint to the staff
 export const assignFeedback = asyncHandler(async (req, res) => {
-  const { feedbackId, staffId, notes } = req.body;
+  const { feedbackId, staffName, notes } = req.body;
 
   const feedback = await Feedback.findById(feedbackId);
   if (!feedback) {
@@ -63,19 +63,11 @@ export const assignFeedback = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: "Only complaint can be assigned"});
   }
 
-  feedback.assignedTo = staffId;
+  feedback.assignedTo = staffName;
   feedback.status = 'in-progress';
   feedback.notes = notes;
 
   await feedback.save();
-
-  // send notification to staff
-  await Notification.create({
-    recipient: staffId,
-    feedback: feedback._id,
-    type: "feedback_assigned"
-  });
-
   res.status(200).json({ success: true, message: "Feedback assigned successfully", feedback});
 });
 
@@ -115,17 +107,6 @@ export const getOpenComplaints = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
   const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "open" });
   res.status(200).json({ success: true, complaints });
-});
-
-// get your staff
-export const getYourStaff = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-
-  if (!businessId) return res.status(400).json({ success: false, message: "No business found" });
-
-  const business = await Business.findById(businessId).populate("staff", "name email role");
-
-  res.status(200).json({ success: true, staff: business.staff });
 });
 
 // get business feedback complaint

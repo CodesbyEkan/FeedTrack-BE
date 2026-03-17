@@ -24,9 +24,7 @@ const feedbackSchema = new mongoose.Schema({
   },
   source: String,
   assignedTo: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null
+    type: String
   },
   notes: {
     type: String

@@ -4,9 +4,11 @@ import { ENV } from "../config/env.js";
 import {
   createUser,
   findUserByEmail,
+  findUserById,
   findUserWithPassword,
 } from "../services/auth.service.js";
 import Business from "../models/business.model.js";
+import User from "../models/user.model.js";
 
 // signup business owner
 export const signupOwner = asyncHandler(async (req, res) => {
@@ -128,6 +130,6 @@ export const logout = asyncHandler(async (req, res) => {
 
 // get presently authenticated user
 export const getMe = asyncHandler(async (req, res) => {
-  const user = req.user;
+  const user = await User.findById(req.user._id).populate("business", "name type");
   res.status(200).json({ success: true, user });
 });

@@ -4,21 +4,21 @@ import {
   getMe,
   login,
   logout,
-  signupOwnerOwner,
+  signupOwner,
 } from "../controllers/auth.controller.js";
 import { checkAuth } from "../middleware/auth.middleware.js";
 import {
   authSignupValidator,
   authSigninValidator,
   authResultValidator,
-} from "../middleware/validators.js";
+} from "../middleware/validators.middleware.js";
 
 const router = express.Router();
 
 router.get('/me', checkAuth, getMe);
-router.post('/signup-owner', signup);
+router.post('/signup', authSignupValidator, authResultValidator, signupOwner);
 router.post('/staff', checkAuth, createNewStaff);
-router.post('/login', login);
+router.post('/login', authSigninValidator, authResultValidator, login);
 router.post('/logout', logout);
 
 export default router;

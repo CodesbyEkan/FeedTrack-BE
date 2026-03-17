@@ -1,3 +1,4 @@
+import asyncHandler from "express-async-handler";
 import Notification from "../models/notification.model.js";
 
 // get all notifications for logged-in user
