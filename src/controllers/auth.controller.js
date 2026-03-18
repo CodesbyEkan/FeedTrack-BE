@@ -4,7 +4,6 @@ import { ENV } from "../config/env.js";
 import {
   createUser,
   findUserByEmail,
-  findUserById,
   findUserWithPassword,
 } from "../services/auth.service.js";
 import Business from "../models/business.model.js";
@@ -47,41 +46,6 @@ export const signupOwner = asyncHandler(async (req, res) => {
     status: true,
     message: "Business account created successfully.",
     userToken,
-  });
-});
-
-// create new staff logic
-export const createNewStaff = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  const businessId = req.user.business;
-
-  if (!businessId) {
-    return res.status(400).json({
-      success: false,
-      message: "You don't have any business - please register",
-    });
-  }
-
-  // check if user already registers
-  const userAlreadyExist = await findUserByEmail(email);
-  if (userAlreadyExist) {
-    return res
-      .status(400)
-      .json({ success: false, message: "User already exists" });
-  }
-
-  const staff = await createUser({
-    name,
-    email,
-    password,
-    role: "staff",
-    business: businessId,
-  });
-
-  res.status(201).json({
-    success: true,
-    message: "New staff created and assigned successfully",
-    staff,
   });
 });
 
