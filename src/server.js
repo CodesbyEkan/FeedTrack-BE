@@ -7,6 +7,7 @@ import authRoute from "./routes/auth.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
 import notificationRoute from "./routes/notification.route.js";
 import qrRoutes from "./utils/generateQrcode.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 const PORT = ENV.PORT;
@@ -26,7 +27,11 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/v1/auth', authRoute);
-app.use('/api/v1/feedback', feedbackRoute);
+app.use('/api/v1/feedbacks', feedbackRoute);
+app.use('/api/v1/notifications', notificationRoute);
+app.use('/api/v1/qr', qrRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // connect mongodb 

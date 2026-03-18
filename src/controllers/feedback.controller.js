@@ -5,7 +5,20 @@ import User from "../models/user.model.js";
 
 // create feed back
 export const createFeedback = asyncHandler(async (req, res) => {
-  const { businessId, type, guestName, message } = req.body;
+  const { businessId } = req.params;
+  const { type, guestName, message } = req.body;
+
+  // Check for duplicate
+  const existingFeedback = await Feedback.findOne({
+    business: businessId,
+    type,
+    guestName,
+    message
+  });
+
+  if (existingFeedback) {
+    return res.status(400).json({ success: false, message: "Duplicate feedback already exists" });
+  }
 
   const feedback = await Feedback.create({
     business: businessId,
@@ -28,6 +41,34 @@ export const createFeedback = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, message: "Feedback submitted successfully", feedback})
 });
 
+// get feedbacks
+export const getFeedbacks = asyncHandler(async (req, res) => {
+  const businessId = req.user.business;
+
+  const { type, status } = req.query;
+
+  // filter object
+  const filter = { business: businessId };
+
+  // check if type is present in the query strings and add to the filter object
+  if (type) {
+    filter.type = type;
+  }
+
+  // check if type is present in the query strings and add to the filter object
+  if (status) {
+    filter.status = status; // open, in-progress, resolved
+  }
+
+  const feedbacks = await Feedback.find(filter);
+
+  res.status(200).json({
+    success: true,
+    count: feedbacks.length,
+    feedbacks
+  });
+});
+
 // get single feedback
 export const getSingleFeedback = asyncHandler(async (req, res) => {
   const { feedbackId } = req.params;
@@ -40,19 +81,10 @@ export const getSingleFeedback = asyncHandler(async (req, res) => {
   res.status(200).json(feedback);
 });
 
-// get all feedbacks related to the business
-export const getBusinessFeedbacks = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-
-  const feedback = await Feedback.find({ business: businessId })
-  .populate("assignedTo", "name email").sort({ createdAt: -1 });
-
-  res.status(200).json(feedback);
-});
-
 // assign complaint to the staff
 export const assignFeedback = asyncHandler(async (req, res) => {
-  const { feedbackId, staffName, notes } = req.body;
+  const { feedbackId } = req.params;
+  const { staffName } = req.body;
 
   const feedback = await Feedback.findById(feedbackId);
   if (!feedback) {
@@ -65,7 +97,6 @@ export const assignFeedback = asyncHandler(async (req, res) => {
 
   feedback.assignedTo = staffName;
   feedback.status = 'in-progress';
-  feedback.notes = notes;
 
   await feedback.save();
   res.status(200).json({ success: true, message: "Feedback assigned successfully", feedback});
@@ -73,7 +104,9 @@ export const assignFeedback = asyncHandler(async (req, res) => {
 
 // resolve complaint
 export const resolveFeedback = asyncHandler(async (req, res) => {
-  const { feedbackId } = req.body;
+  const { feedbackId } = req.params;
+
+  const { notes } = req.body;
   
   const feedback = await Feedback.findById(feedbackId);
   if (!feedback) {
@@ -81,54 +114,10 @@ export const resolveFeedback = asyncHandler(async (req, res) => {
   }
 
   feedback.status = "resolved";
+  feedback.notes = notes;
   feedback.resolvedAt = new Date();
 
   await feedback.save();
 
   res.status(200).json({ success: true, message: "Feedback resolved successfully", feedback});
 });
-
-// get in-progress complaint
-export const getInProgressComplaints = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "in-progress" });
-  res.status(200).json({ success: true, complaints });
-});
-
-// get resolved complaint
-export const getResolvedComplaints = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "resolved" });
-  res.status(200).json({ success: true, complaints });
-});
-
-// get open complaint
-export const getOpenComplaints = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "open" });
-  res.status(200).json({ success: true, complaints });
-});
-
-// get business feedback complaint
-export const getComplaints = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-  const complaints = await Feedback.find({ business: businessId, type: "complaint" });
-  res.status(200).json({ success: true, complaints });
-});
-
-// get business feedback compliment
-export const getCompliments = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-  const compliments = await Feedback.find({ business: businessId, type: "compliment" });
-  res.status(200).json({ success: true, compliments });
-});
-
-// get business feedback suggestions
-export const getSuggestions = asyncHandler(async (req, res) => {
-  const businessId = req.user.business;
-  const suggestions = await Feedback.find({ business: businessId, type: "suggestion" });
-  res.status(200).json({ success: true, suggestions });
-});
-
-// todo:
-// generate qrcodes
