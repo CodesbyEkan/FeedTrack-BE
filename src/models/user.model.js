@@ -36,10 +36,10 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {
-  if (!this.isModified("password")) {
-    return;
-  }
+  if (!this.isModified("password")) return; 
+  
   this.password = await bcryptjs.hash(this.password, 10);
+
 });
 
 userSchema.methods.comparePassword = async function(password) {
@@ -48,7 +48,7 @@ userSchema.methods.comparePassword = async function(password) {
 
 userSchema.methods.generateToken = function() {
   return jwt.sign({id:this._id}, ENV.JWT_SECRET, {
-    expiresIn: ENV.JWT_EXPIRE
+    expiresIn: ENV.JWT_EXPIRE || "1h"
   });
 };
 

@@ -18,11 +18,22 @@ export const createFeedback = asyncHandler(async (req, res) => {
   const owner = await User.findOne({ business: businessId, role: "owner"});
   if (owner) {
     // create a notification
-    await Notification.create({
-      recipient: owner._id,
-      feedback: feedback._id,
-      type: "new_feedback"
-    })
+    // await Notification.create({
+    //   recipient: owner._id,
+    //   feedback: feedback._id,
+    //   type: "new_feedback"
+    // })
+
+    const notification = await Notification.create({
+  recipient: owner._id,
+  feedback: feedback._id,
+  type: "new_feedback"
+});
+
+const io = req.app.get("io");
+
+// emit to the business owner only
+io.to(owner._id.toString()).emit("new-notification", notification);
   }
 
   res.status(201).json({ success: true, message: "Feedback submitted successfully", feedback})
@@ -69,12 +80,19 @@ export const assignFeedback = asyncHandler(async (req, res) => {
 
   await feedback.save();
 
+<<<<<<< Updated upstream
   // send notification to staff
   await Notification.create({
     recipient: staffId,
     feedback: feedback._id,
     type: "feedback_assigned"
   });
+=======
+  
+  const io = req.app.get("io");
+
+io.to(feedback.business.toString()).emit("feedback-assigned", feedback);
+>>>>>>> Stashed changes
 
   res.status(200).json({ success: true, message: "Feedback assigned successfully", feedback});
 });
@@ -92,6 +110,10 @@ export const resolveFeedback = asyncHandler(async (req, res) => {
   feedback.resolvedAt = new Date();
 
   await feedback.save();
+  const io = req.app.get("io");
+
+io.to(feedback.business.toString()).emit("feedback-resolved", feedback);
+
 
   res.status(200).json({ success: true, message: "Feedback resolved successfully", feedback});
 });

@@ -15,4 +15,41 @@ export const getSingleNotification = asyncHandler(async (req, res) => {
   if (!notification) return res.status(404).json({ success: false, message: "Notification not found" });
 
   res.status(200).json({ success: true, notification });
+<<<<<<< Updated upstream
+=======
+});
+
+// mark notification as read
+export const markNotificationAsRead = asyncHandler(async (req, res) => {
+  const { notificationId } = req.params;
+
+  const notification = await Notification.findById(notificationId);
+
+  if (!notification) {
+    return res.status(404).json({ success: false, message: "Notification not found" });
+  }
+
+  // Check if already read
+  if (notification.read) {
+    return res.status(400).json({ success: false, message: "Notification already marked as read"});
+  }
+
+  // Mark as read
+  // notification.read = true;
+  // await notification.save();
+
+  notification.read = true;
+await notification.save();
+
+const io = req.app.get("io");
+
+// emit to the specific user (recommended)
+io.to(notification.recipient.toString()).emit("notification-read", notification);
+
+  res.status(200).json({
+    success: true,
+    message: "Notification marked as read successfully",
+    notification
+  });
+>>>>>>> Stashed changes
 });

@@ -1,24 +1,25 @@
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import http from "http";
+import { Server } from "socket.io";
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
+<<<<<<< Updated upstream
 import authRoute from "./routes/auth.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
 import qrRoutes from "./utils/generateQrcode.js";
+=======
+import app from "./app.js";
+>>>>>>> Stashed changes
 
-const app = express();
 const PORT = ENV.PORT;
+const server = http.createServer(app);
 
-// middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+// app.listen(PORT, () => {
+//   // connect mongodb 
+//   connectDB();
+//   console.log(`Server running on ${PORT}`);
+// })
 
+<<<<<<< Updated upstream
 
 app.get("/", (req, res) => {
   res.send("Welcome to Feedback Management");
@@ -31,6 +32,9 @@ app.use('/api/v1/qr', qrRoutes);
 
 app.listen(PORT, () => {
   // connect mongodb 
+=======
+server.listen(PORT, () => {
+>>>>>>> Stashed changes
   connectDB();
   console.log(`Server running on ${PORT}`);
-})
+});
