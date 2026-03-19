@@ -5,7 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoute from "./routes/auth.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
-import notificationRoute from "./routes/notification.route.js";
+import notificationRoute from "./routes/notification.router.js";
 import qrRoutes from "./utils/generateQrcode.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 

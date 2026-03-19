@@ -80,19 +80,12 @@ export const assignFeedback = asyncHandler(async (req, res) => {
 
   await feedback.save();
 
-<<<<<<< Updated upstream
-  // send notification to staff
-  await Notification.create({
-    recipient: staffId,
-    feedback: feedback._id,
-    type: "feedback_assigned"
-  });
-=======
+
   
   const io = req.app.get("io");
 
 io.to(feedback.business.toString()).emit("feedback-assigned", feedback);
->>>>>>> Stashed changes
+
 
   res.status(200).json({ success: true, message: "Feedback assigned successfully", feedback});
 });

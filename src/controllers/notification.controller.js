@@ -1,3 +1,4 @@
+import asyncHandler from "express-async-handler";
 import Notification from "../models/notification.model.js";
 
 // get all notifications for logged-in user
@@ -15,8 +16,7 @@ export const getSingleNotification = asyncHandler(async (req, res) => {
   if (!notification) return res.status(404).json({ success: false, message: "Notification not found" });
 
   res.status(200).json({ success: true, notification });
-<<<<<<< Updated upstream
-=======
+
 });
 
 // mark notification as read
@@ -51,5 +51,5 @@ io.to(notification.recipient.toString()).emit("notification-read", notification)
     message: "Notification marked as read successfully",
     notification
   });
->>>>>>> Stashed changes
+
 });
