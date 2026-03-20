@@ -47,7 +47,7 @@ export const authSignupValidator = [
     .notEmpty()
     .withMessage("Business phone number is required!")
     .bail()
-    .matches(/^\+?\d{10,15}$/)
+    .matches(/^\+?\d[\d\s]{9,14}$/)
     .withMessage("Phone number not valid!. Format: +234 473 422 5773!")
     .escape(),
 ];

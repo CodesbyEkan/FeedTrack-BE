@@ -1,13 +1,38 @@
-import express from "express"
+// import express from "express"
+// import { createNewStaff, getMe, login, logout, signupOwner } from "../controllers/auth.controller.js";
+// import { checkAuth } from "../middleware/auth.middleware.js";
+
+// const router = express.Router();
+
+// router.get('/me', checkAuth, getMe);
+// router.post('/signup-owner', signupOwner);
+// router.post('/staff', checkAuth, createNewStaff);
+// router.post('/login', login);
+// router.post('/logout', logout);
+
+// export default router;
+
+
+import express from "express";
 import { createNewStaff, getMe, login, logout, signupOwner } from "../controllers/auth.controller.js";
 import { checkAuth } from "../middleware/auth.middleware.js";
+import {
+  authSignupValidator,
+  authSigninValidator,
+  authResultValidator,
+} from "../middleware/validators.middleware.js";
 
 const router = express.Router();
 
-router.get('/me', checkAuth, getMe);
-router.post('/signup-owner', signupOwner);
-router.post('/staff', checkAuth, createNewStaff);
-router.post('/login', login);
-router.post('/logout', logout);
+router.get("/me", checkAuth, getMe);
+
+// Validators are now applied — previously they were defined but never used
+router.post("/signup-owner", authSignupValidator, authResultValidator, signupOwner);
+router.post("/login", authSigninValidator, authResultValidator, login);
+
+router.post("/staff", checkAuth, createNewStaff);
+router.post("/logout", logout);
 
 export default router;
+
+

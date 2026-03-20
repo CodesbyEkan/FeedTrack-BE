@@ -52,6 +52,13 @@ export const checkAuth = async (req, res, next) => {
       }
     }
   
+
+  // 2. Fall back to cookie (used by browser clients)
+    if (!accessToken && req.cookies?.accessToken) {
+      accessToken = req.cookies.accessToken;
+    }
+
+
     if (!accessToken) {
       return res.status(401).json({ success: false, message: "Authentication is missing! Please login to access resource"});
     }
@@ -76,10 +83,13 @@ export const checkAuth = async (req, res, next) => {
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token",
+      error: error.message
     });
 
   }
 };
+
+//Role based control
 
 export const roleBasedPermission = (...roles) => {
   return (req, res, next) => {
