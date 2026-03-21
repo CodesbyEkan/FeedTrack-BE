@@ -364,7 +364,7 @@ Authorization: Bearer <your_token>
 #### 21. Generate a QR code
 
 ```
-GET /api/qr/<your_business_id>
+GET /api/v1/qr/<your_business_id>
 ```
 
 No auth needed. Open in a browser — you'll see a JSON response with a base64-encoded QR image.
@@ -389,7 +389,7 @@ Alternatively, use a Socket.io test client:
 - Emit `join` with your user ID as a string
 - Submit feedback via Postman and watch the `new-notification` event arrive
 
----
+---https://guestpulse-hospitality-management.netlify.app/?businessId=69be2b0414560af2d32553b9
 
 ## Step 5 — Test the frontend
 

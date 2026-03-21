@@ -39,7 +39,7 @@ export const authSignupValidator = [
     .notEmpty()
     .withMessage("Business type can't be empty!")
     .bail()
-    .matches(/^[a-zA-Z\s]+$/)
+    .matches(/^[A-za-z\/\s]+$/)
     .withMessage("Business type must contain alphabet characters only!")
     .escape(),
   body("businessPhone")
