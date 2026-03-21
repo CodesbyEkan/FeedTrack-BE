@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/feedbacks', feedbackRoute);
 app.use('/api/v1/notifications', notificationRoute);
-app.use('/api', qrUtils);
+app.use('/api/v1', qrUtils);
 
 app.use(errorHandler);
 
