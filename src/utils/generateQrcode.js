@@ -15,7 +15,7 @@ export async function generateQRCode(url) {
 router.get("/qr/:businessId", async (req, res) => {
   try { 
     const {businessId} = req.params ;
-    const requiredUrl = `https://myfrontend.com/feedback?businessId=${businessId}`;
+    const requiredUrl = `https://guestpulse-hospitality-management.netlify.app/feedback?businessId=${businessId}`;
     const qr = await generateQRCode(requiredUrl);   //url to be edited once form is created
 
 //     res.send(`<img src="${qr}" />`);

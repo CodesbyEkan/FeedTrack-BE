@@ -24,7 +24,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [ ENV.CLIENT_ORIGIN || "http://127.0.0.1:3000",
+    origin: [ ENV.CLIENT_ORIGIN || "https://guestpulse-hospitality-management.netlify.app",
       "http://localhost:3000"
     ],
 
