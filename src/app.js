@@ -16,7 +16,7 @@ const app = express();
 // middlewares
 
 app.use(cors({
-  origin: ["https://guestpulse-hospitality-management.netlify.app",
+  origin: ["https://guestpulse.netlify.app",
             "http://127.0.0.1:8080"
   ],
   methods:["GET", "POST", "PUT", "DELETE"],
