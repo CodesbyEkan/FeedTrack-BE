@@ -1,33 +1,56 @@
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import http from "http";
+import { Server } from "socket.io";
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
-import authRoute from "./routes/auth.route.js";
-import feedbackRoute from "./routes/feedback.route.js";
 
-const app = express();
-const PORT = ENV.PORT;
-
-// middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+import app from "./app.js";
 
 
-app.get("/", (req, res) => {
-  res.send("Welcome to Feedback Management");
+const PORT = ENV.PORT || 5000;
+const server = http.createServer(app);
+
+// app.listen(PORT, () => {
+//   // connect mongodb 
+//   connectDB();
+//   console.log(`Server running on ${PORT}`);
+// })
+
+
+// server.listen(PORT, () => {
+
+//   connectDB();
+//   console.log(`Server running on ${PORT}`);
+// });
+
+const io = new Server(server, {
+  cors: {
+    origin: [ ENV.CLIENT_ORIGIN || "https://guestpulse.netlify.app",
+      "http://127.0.0.1:8080"
+    ],
+
+    methods:["GET", "POST"],
+    credentials: true,
+  },
 });
 
-app.use('/api/v1/auth', authRoute);
-app.use('/api/v1/feedback', feedbackRoute);
+// Make io accessible in controllers via req.app.get("io")
+app.set("io", io);
 
-app.listen(PORT, () => {
-  // connect mongodb 
+io.on("connection", (socket) => {
+  console.log("Socket connected:", socket.id);
+
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`Socket ${socket.id} joined room: ${userId}`);
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log("Socket disconnected:", socket.id, reason);
+  });
+});
+
+server.listen(PORT, () => {
+
   connectDB();
   console.log(`Server running on ${PORT}`);
-})
+});

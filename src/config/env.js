@@ -9,4 +9,5 @@ export const ENV = {
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRE: process.env.JWT_EXPIRE,
   EXPIRE_COOKIE: process.env.EXPIRE_COOKIE,
-};
+ //CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+}
