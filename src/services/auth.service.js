@@ -7,7 +7,8 @@ export const findUserById = async (id) => {
 
 // find user by email
 export const findUserByEmail = async (email) => {
-  return await User.findOne({ email });
+  // return await User.findOne({ email });
+  return await User.findOne({ email }).populate('business');
 };
 
 // create new user
