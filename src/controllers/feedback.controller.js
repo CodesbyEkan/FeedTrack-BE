@@ -2,9 +2,43 @@ import asyncHandler from "express-async-handler";
 import Feedback from "../models/feedback.model.js";
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
+import mongoose from "mongoose";
 
 // create feed back
+
 export const createFeedback = asyncHandler(async (req, res) => {
+  const { businessId, type, guestName, message } = req.body;
+
+  // ✅ Validate businessId is a real ObjectId before querying
+  if (!businessId || !mongoose.Types.ObjectId.isValid(businessId)) {
+    return res.status(400).json({ success: false, message: "Invalid businessId" });
+  }
+
+  const feedback = await Feedback.create({
+    business: businessId,
+    type,
+    guestName,
+    message
+  });
+
+  const owner = await User.findOne({ business: businessId, role: "owner" });
+  if (owner) {
+    const notification = await Notification.create({
+      recipient: owner._id,
+      feedback: feedback._id,
+      type: "new_feedback"
+    });
+
+    const io = req.app.get("io");
+    io.to(owner._id.toString()).emit("new-notification", notification);
+
+    // ✅ Also emit new-feedback event so dashboard updates in real time
+    io.to(owner._id.toString()).emit("new-feedback", { feedback });
+  }
+
+  res.status(201).json({ success: true, message: "Feedback submitted successfully", feedback });
+});
+/* export const createFeedback = asyncHandler(async (req, res) => {
   const { businessId, type, guestName, message } = req.body;
 
   const feedback = await Feedback.create({
@@ -37,7 +71,7 @@ io.to(owner._id.toString()).emit("new-notification", notification);
   }
 
   res.status(201).json({ success: true, message: "Feedback submitted successfully", feedback})
-});
+});*/
 
 // get single feedback
 export const getSingleFeedback = asyncHandler(async (req, res) => {
@@ -176,7 +210,7 @@ export const getComplaints = asyncHandler(async (req, res) => {
     business: businessId,
     type: "complaint",
   })
-    .select("message rating createdAt")
+    //.select("message rating createdAt")
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
