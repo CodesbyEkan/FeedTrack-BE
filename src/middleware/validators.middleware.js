@@ -63,6 +63,29 @@ export const authSigninValidator = [
   body("password").notEmpty().withMessage("Password is required!"),
 ];
 
+export const addStaffValidator = [
+  body("fullname")
+    .trim()
+    .notEmpty()
+    .withMessage("fullname cannot be empty!")
+    .bail()
+    .matches(/^[a-zA-Z\s]+$/)
+    .withMessage("Name must be alphabetical characters.")
+    .isLength({ min: 3, max: 35 })
+    .withMessage("Name should have 4-35 characters.")
+    .escape(),
+  body("role")
+    .trim()
+    .notEmpty()
+    .withMessage("Please specify staff's role.")
+    .bail()
+    .isAlpha()
+    .withMessage("Role must be in alphabets")
+    .isLength({ min: 4, max: 17 })
+    .withMessage("Role should be between 4-17 characters.")
+    .escape(),
+];
+
 export const authResultValidator = (req, res, next) => {
   const authError = validationResult(req);
   if (!authError.isEmpty()) {
