@@ -36,7 +36,46 @@ export const signupOwner = asyncHandler(async (req, res) => {
 });
 
 // create new staff logic
+
 export const createNewStaff = asyncHandler(async (req, res) => {
+  try {
+    const { fullname, role } = req.body;
+    const businessId = req.user.business;
+
+    if (!businessId) {
+      return res.status(400).json({
+        success: false,
+        message: "You don't have any business - please register",
+      });
+    }
+
+    const existName = await Staff.findOne({
+      fullname: { $regex: `^${fullname}$`, $options: "i" },
+      business: businessId,
+    });
+
+    if (existName) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Duplicate names not allowed!" });
+    }
+
+    const staff = await Staff.create({
+      business: businessId,
+      fullname,
+      role,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "New staff created and assigned successfully",
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+/* export const createNewStaff = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const businessId = req.user.business;
 
@@ -60,7 +99,7 @@ export const createNewStaff = asyncHandler(async (req, res) => {
 
   res.status(201).json({ success: true, message: "New staff created and assigned successfully", staff});
 
-});
+}); */
 
 // login controller
 export const login = asyncHandler(async (req, res) => {
