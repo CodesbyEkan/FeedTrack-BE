@@ -3,6 +3,7 @@ import { generateAndSetCookie } from "../utils/generateAndSetCookie.js";
 import { ENV } from "../config/env.js";
 import { createUser, findUserByEmail, findUserWithPassword } from "../services/auth.service.js";
 import Business from "../models/business.model.js";
+import Staff from "../models/staff.model.js";
 
 // signup business owner
 export const signupOwner = asyncHandler(async (req, res) => {
