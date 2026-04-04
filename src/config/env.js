@@ -8,5 +8,5 @@ export const ENV = {
   MONGO_URI: process.env.MONGO_URI,
   JWT_SECRET: process.env.JWT_SECRET,
   EXPIRE_COOKIE: process.env.EXPIRE_COOKIE,
- //CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:5173",
 }

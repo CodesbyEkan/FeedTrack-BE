@@ -9,6 +9,7 @@ import notificationRoute from "./routes/notification.router.js";
 //import qrUtils from "./utils/generateQrcode.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import qrRoute from "./routes/qr.Route.js";
+import { ENV } from "./config/env.js";
 
 const app = express();
 
@@ -18,7 +19,8 @@ const app = express();
 
 app.use(cors({
   origin: ["https://guestpulse.netlify.app",
-            "http://127.0.0.1:8080"
+            "http://127.0.0.1:8080",
+            ENV.CLIENT_ORIGIN, ENV.MONGO_URI, "mongodb://127.0.0.1:27017"
   ],
   methods:["GET", "POST", "PUT", "DELETE"],
   credentials: true
