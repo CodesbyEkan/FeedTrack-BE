@@ -1,5 +1,6 @@
 import express from "express";
 import { generateQRCode } from "../services/qr.Service.js";
+import { ENV } from "../config/env.js";
 
 const router = express.Router();
 
