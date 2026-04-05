@@ -5,7 +5,7 @@ export const getAllStaff = asyncHandler(async (req, res) => {
   try {
     const businessId = req.user.business;
     if (!businessId) {
-      return res.status(501).json({
+      return res.status(400).json({
         status: false,
         message: "Business not found!",
       });
@@ -25,7 +25,8 @@ export const getAllStaff = asyncHandler(async (req, res) => {
 
 export const getStaff = asyncHandler(async (req, res) => {
   try {
-    const staffId = req.params.id;
+    // const staffId = req.params.id;
+    const staffId = req.params.staffid;
     const staff = await Staff.findById(staffId);
     if (!staff) {
       return res

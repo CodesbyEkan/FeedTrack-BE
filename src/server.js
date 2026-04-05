@@ -9,18 +9,7 @@ import app from "./app.js";
 const PORT = ENV.PORT || 5000;
 const server = http.createServer(app);
 
-// app.listen(PORT, () => {
-//   // connect mongodb 
-//   connectDB();
-//   console.log(`Server running on ${PORT}`);
-// })
 
-
-// server.listen(PORT, () => {
-
-//   connectDB();
-//   console.log(`Server running on ${PORT}`);
-// });
 
 const io = new Server(server, {
   cors: {

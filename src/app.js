@@ -7,7 +7,6 @@ import authRoute from "./routes/auth.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
 import notificationRoute from "./routes/notification.router.js";
 import staffRouter from "./routes/staff.route.js";
-//import qrUtils from "./utils/generateQrcode.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import qrRoute from "./routes/qr.Route.js";
 import { ENV } from "./config/env.js";

@@ -48,7 +48,7 @@ userSchema.methods.comparePassword = async function(password) {
 
 userSchema.methods.generateToken = function() {
   return jwt.sign({id:this._id}, ENV.JWT_SECRET, {
-    expiresIn: ENV.JWT_EXPIRE || "1h"
+    expiresIn: ENV.JWT_EXPIRE || "7d"
   });
 };
 

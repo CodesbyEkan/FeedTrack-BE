@@ -12,8 +12,8 @@ router.get("/qr/:businessId", async (req, res) => {
   }
 
   try {
-    //const requiredUrl = `https://guestpulse.netlify.app/?businessId=${encodeURIComponent(businessId)}`;
-    const requiredUrl = `http://localhost:3000/?businessId=${encodeURIComponent(businessId)}`;
+     const BASE_URL = ENV.CLIENT_ORIGIN || "https://guestpulse.netlify.app";
+    const requiredUrl = `${BASE_URL}/?businessId=${encodeURIComponent(businessId)}`;
     const qrCode = await generateQRCode(requiredUrl);
 
     res.status(200).json({

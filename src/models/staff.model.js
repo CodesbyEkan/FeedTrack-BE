@@ -9,7 +9,7 @@ const staffSchema = new mongoose.Schema(
     fullname: {
       type: String,
       required: true,
-      unique: true,
+      //unique: true,
     },
     role: {
       type: String,
@@ -29,6 +29,7 @@ const staffSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+staffSchema.index({ fullname: 1, business: 1 }, { unique: true }); //recently added to test for unique business
 const Staff = mongoose.model("Staff", staffSchema);
 
 export default Staff;

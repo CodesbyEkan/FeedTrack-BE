@@ -70,6 +70,8 @@ export const createNewStaff = asyncHandler(async (req, res) => {
     res.status(201).json({
       success: true,
       message: "New staff created and assigned successfully",
+      //new input
+      data: staff,
     });
   } catch (err) {
     console.log(err);
