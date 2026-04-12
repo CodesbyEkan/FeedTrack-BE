@@ -7,9 +7,8 @@ export const generateAndSetCookie = (user, statusCode, res) => {
   const options = {
     maxAge: ENV.EXPIRE_COOKIE*24*60*60*1000, // set in milliseconds
     httpOnly: true, // prevent xss attacks
-    sameSite: 'None', // CSRF attacks cross-site request forgery attacks
-    //secure: ENV.NODE_ENV !== "development",
-    secure: ENV.NODE_ENV !== true,
+    sameSite: 'strict', // CSRF attacks cross-site request forgery attacks
+    secure: ENV.NODE_ENV !== "development",
   }
 
   user.password = undefined;
