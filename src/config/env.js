@@ -10,5 +10,7 @@ export const ENV = {
   EXPIRE_COOKIE: process.env.EXPIRE_COOKIE,
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:5173",
   JWT_EXPIRE: process.env.JWT_EXPIRE,
+  EMAIL_USER: process.env.EMAIL_USER,
+  EMAIL_PASS: process.env.EMAIL_PASS,
 }
   

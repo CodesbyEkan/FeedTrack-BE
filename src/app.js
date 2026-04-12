@@ -1,5 +1,3 @@
-import http from "http";
-import { Server } from "socket.io";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -10,6 +8,8 @@ import staffRouter from "./routes/staff.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import qrRoute from "./routes/qr.Route.js";
 import { ENV } from "./config/env.js";
+import businessRoute from "./routes/bussiness.route.js";
+
 
 const app = express();
 
@@ -46,6 +46,7 @@ app.use('/api/v1/feedbacks', feedbackRoute);
 app.use('/api/v1/notifications', notificationRoute);
 app.use('/api/v1/staff', staffRouter);
 app.use('/api/v1', qrRoute);
+app.use('/api/v1/business', businessRoute); 
 
 app.use(errorHandler);
 
