@@ -2,42 +2,7 @@ import jwt from 'jsonwebtoken';
 import { ENV } from '../config/env.js';
 import { findUserById } from "../services/auth.service.js";
 
-// export const checkAuth = async (req, res, next) => {
-//   try {
-//     let accessToken;
-//     if (req.headers.authorization?.startsWith("Bearer ")) {
-//       accessToken = req.headers.authorization.split(" ")[1];
-//     }
 
-//     if (!accessToken && req.cookies?.accessToken) {
-//       accessToken = req.cookies.accessToken;
-//     }
-
-//     if (!accessToken) {
-//       return res.status(401).json({
-//         success: false,
-//         message: "Authentication is missing! Please login to access resource",
-//       });
-//     }
-
-//     const verifyAccessToken = jwt.verify(accessToken, ENV.JWT_SECRET);
-
-//     const user = await findUserById(verifyAccessToken.id);
-//     if (!user) {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "User not found" });
-//     }
-//     req.user = user;
-
-//     next();
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: `Error in the checkAuth - ${error.message}`,
-//     });
-//   }
-// };
 
 
 

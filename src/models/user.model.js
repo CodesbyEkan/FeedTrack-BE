@@ -32,7 +32,9 @@ const userSchema = new mongoose.Schema({
   business: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Business"
-  }
+  },
+  resetPasswordToken:   { type: String },
+  resetPasswordExpires: { type: Date },
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {
