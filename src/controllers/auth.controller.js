@@ -1,12 +1,13 @@
 import asyncHandler from "express-async-handler";
 import { generateAndSetCookie } from "../utils/generateAndSetCookie.js";
 import { ENV } from "../config/env.js";
+import { transporter } from "../config/transporter.js"
 import { createUser, findUserByEmail, findUserWithPassword } from "../services/auth.service.js";
 import Business from "../models/business.model.js";
 import Staff from "../models/staff.model.js";
 import crypto from "crypto";
 import User from "../models/user.model.js";
-import transporter from "../utils/mailer.js";
+
 
 
 // signup business owner
@@ -172,7 +173,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     await transporter.sendMail({
-      from:    `"GuestPulse" <${process.env.SMTP_USER}>`,
+      from:    `"GuestPulse" <${ENV.EMAIL_USER}>`,
       to:      user.email,
       subject: 'Reset your password',
       html: `

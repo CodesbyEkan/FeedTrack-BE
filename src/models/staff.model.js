@@ -22,7 +22,7 @@ const staffSchema = new mongoose.Schema(
         "Manager",
         "Bartender",
         "Driver",
-        "Others",
+        "Other",
       ],
     },
   },
