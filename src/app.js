@@ -1,15 +1,15 @@
-import http from "http";
-import { Server } from "socket.io";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoute from "./routes/auth.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
 import notificationRoute from "./routes/notification.router.js";
-//import qrUtils from "./utils/generateQrcode.js";
+import staffRouter from "./routes/staff.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import qrRoute from "./routes/qr.Route.js";
 import { ENV } from "./config/env.js";
+import businessRoute from "./routes/bussiness.route.js";
+
 
 const app = express();
 
@@ -18,7 +18,7 @@ const app = express();
 app.use(cors({
   origin: ["https://guestpulse.netlify.app",
             "http://127.0.0.1:8080",
-            ENV.CLIENT_ORIGIN, ENV.MONGO_URI, "mongodb://127.0.0.1:27017"
+            ENV.CLIENT_ORIGIN
   ],
   methods:["GET", "POST", "PUT", "DELETE"],
   credentials: true
@@ -33,11 +33,12 @@ app.get("/", (req, res) => {
   res.send("Welcome to Feedback Management");
 });
 
-app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/feedbacks", feedbackRoute);
-app.use("/api/v1/notifications", notificationRoute);
-app.use("/api/v1/staff", staffRoute);
-app.use("/api/v1", qrRoute);
+app.use('/api/v1/auth', authRoute);
+app.use('/api/v1/feedbacks', feedbackRoute);
+app.use('/api/v1/notifications', notificationRoute);
+app.use('/api/v1/staff', staffRouter);
+app.use('/api/v1', qrRoute);
+app.use('/api/v1/business', businessRoute); 
 
 app.use(errorHandler);
 

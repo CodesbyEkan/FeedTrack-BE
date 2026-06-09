@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import Feedback from "../models/feedback.model.js";
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
+import Business from "../models/business.model.js";
+import { sendComplaintEmail } from '../utils/sendEmail.js';
 import mongoose from "mongoose";
 
 // create feed back
@@ -34,10 +36,22 @@ export const createFeedback = asyncHandler(async (req, res) => {
 
     // ✅ Also emit new-feedback event so dashboard updates in real time
     io.to(owner._id.toString()).emit("new-feedback", { feedback });
-  }
 
+     // Email notification (new)
+    const business = await Business.findById(businessId);
+    sendComplaintEmail({
+      ownerEmail:   owner.email,
+      ownerName:    owner.name,
+      businessName: business?.name || 'Your Business',
+      guestName:    guestName || 'Anonymous',
+      message,
+      type,
+    }).catch(err => console.error('Email send failed:', err.message));
+    // .catch() so a failed email never crashes the response
+  
+  }
   res.status(201).json({ success: true, message: "Feedback submitted successfully", feedback });
-});
+}); 
 /* export const createFeedback = asyncHandler(async (req, res) => {
   const { businessId, type, guestName, message } = req.body;
 
@@ -90,9 +104,10 @@ export const getBusinessFeedbacks = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
 
   const feedbacks = await Feedback.find({ business: businessId })
-  .populate("assignedTo", "name email").sort({ createdAt: -1 });
+  .populate("assignedTo", "fullname role").sort({ createdAt: -1 });
 
-  res.status(200).json(feedbacks);
+  //res.status(200).json(feedbacks);
+  res.status(200).json({ success: true, count: feedbacks.length, feedbacks });
 });
 
 // assign complaint to the staff
@@ -114,7 +129,9 @@ export const assignFeedback = asyncHandler(async (req, res) => {
 
   await feedback.save();
 
-
+  // FIX: populate from Staff model so fullname is available in response
+  const populatedFeedback = await Feedback.findById(feedback._id)
+    .populate("assignedTo", "fullname role");
   
   const io = req.app.get("io");
 
@@ -126,7 +143,7 @@ io.to(feedback.business.toString()).emit("feedback-assigned", feedback);
 
 // resolve complaint
 export const resolveFeedback = asyncHandler(async (req, res) => {
-  const { feedbackId } = req.body;
+  const { feedbackId, notes } = req.body;
   
   const feedback = await Feedback.findById(feedbackId);
   if (!feedback) {
@@ -135,6 +152,7 @@ export const resolveFeedback = asyncHandler(async (req, res) => {
 
   feedback.status = "resolved";
   feedback.resolvedAt = new Date();
+  if (notes) feedback.notes = notes; // new-input
 
   await feedback.save();
   const io = req.app.get("io");

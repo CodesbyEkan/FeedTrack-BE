@@ -10,4 +10,10 @@ export const ENV = {
   JWT_EXPIRE: process.env.JWT_EXPIRE,
   EXPIRE_COOKIE: process.env.EXPIRE_COOKIE,
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+  JWT_EXPIRE: process.env.JWT_EXPIRE,
+  EMAIL_USER: process.env.EMAIL_USER,
+  EMAIL_PASS: process.env.EMAIL_PASS,
+  SMTP_PORT: process.env.SMTP_PORT,
+  SMTP_HOST: process.env.SMTP_HOST,
 }
+  

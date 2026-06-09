@@ -1,5 +1,6 @@
 import express from "express";
 import { generateQRCode } from "../services/qr.Service.js";
+import { ENV } from "../config/env.js";
 
 const router = express.Router();
 
@@ -12,8 +13,8 @@ router.get("/qr/:businessId", async (req, res) => {
   }
 
   try {
-    //Should check out site url later
-    const requiredUrl = `http://localhost:3000/?businessId=${encodeURIComponent(businessId)}`;
+     const BASE_URL = ENV.CLIENT_ORIGIN || "https://guestpulse.netlify.app";
+    const requiredUrl = `${BASE_URL}/?businessId=${encodeURIComponent(businessId)}`;
     const qrCode = await generateQRCode(requiredUrl);
 
     res.status(200).json({
