@@ -4,7 +4,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoute from "./routes/auth.route.js";
-import staffRoute from "./routes/staff.route.js";
 import feedbackRoute from "./routes/feedback.route.js";
 import notificationRoute from "./routes/notification.router.js";
 //import qrUtils from "./utils/generateQrcode.js";

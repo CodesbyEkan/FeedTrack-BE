@@ -1,34 +1,23 @@
 import mongoose from "mongoose";
+import { type } from "node:os";
 
-const staffSchema = new mongoose.Schema(
-  {
-    business: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Business",
-    },
-    fullname: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    role: {
-      type: String,
-      enum: [
-        "Front Desk",
-        "Waiter",
-        "House keeping",
-        "Security",
-        "Chef",
-        "Manager",
-        "Bartender",
-        "Driver",
-        "Others",
-      ],
-    },
+const staffSchema = new mongoose.Schema({
+  fullname: {
+    type: String,
+    required: true,
   },
-  { timestamps: true },
-);
-
-const Staff = mongoose.model("Staff", staffSchema);
-
-export default Staff;
+  role: {
+    type: String,
+    enum: [
+      "Front Desk",
+      "Waiter",
+      "House keeping",
+      "Security",
+      "Chef",
+      "Manager",
+      "Bartender",
+      "Driver",
+      "Others",
+    ],
+  },
+});
