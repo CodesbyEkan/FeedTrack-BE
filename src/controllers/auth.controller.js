@@ -45,7 +45,9 @@ export const signupOwner = asyncHandler(async (req, res) => {
 
 export const createNewStaff = asyncHandler(async (req, res) => {
   try {
-    const { fullname, role } = req.body;
+    
+   console.log(req.body);
+    const { fullname, role, phoneNumber } = req.body;
     const businessId = req.user.business;
 
     if (!businessId) {
@@ -70,6 +72,7 @@ export const createNewStaff = asyncHandler(async (req, res) => {
       business: businessId,
       fullname,
       role,
+      phoneNumber,
     });
 
     res.status(201).json({

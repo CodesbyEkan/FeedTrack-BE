@@ -25,6 +25,12 @@ const staffSchema = new mongoose.Schema(
         "Other",
       ],
     },
+    phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    }
   },
   { timestamps: true },
 );
