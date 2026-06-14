@@ -84,6 +84,14 @@ export const addStaffValidator = [
     .isLength({ min: 4, max: 17 })
     .withMessage("Role should be between 4-17 characters.")
     .escape(),
+  body("phoneNumber")
+    .trim()
+    .notEmpty()
+    .withMessage("Phone number is required!")
+    .bail()
+    .matches(/^\+?\d[\d\s]{9,14}$/)
+    .withMessage("Phone number not valid!. Format: +234 473 422 5773!")
+    .escape(),
 ];
 
 export const authResultValidator = (req, res, next) => {
