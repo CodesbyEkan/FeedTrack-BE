@@ -26,7 +26,7 @@ export const getAllStaff = asyncHandler(async (req, res) => {
 export const getStaff = asyncHandler(async (req, res) => {
   try {
     // const staffId = req.params.id;
-    const staffId = req.params.staffid;
+    const staffId = req.params.staffId;
     const staff = await Staff.findById(staffId);
     if (!staff) {
       return res

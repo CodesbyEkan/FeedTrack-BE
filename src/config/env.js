@@ -15,5 +15,8 @@ export const ENV = {
   EMAIL_PASS: process.env.EMAIL_PASS,
   SMTP_PORT: process.env.SMTP_PORT,
   SMTP_HOST: process.env.SMTP_HOST,
-}
-  
+  WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
+  WABA_ID: process.env.WABA_ID,
+  WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
+  WHATSAPP_API_VERSION: process.env.WHATSAPP_API_VERSION,
+};
