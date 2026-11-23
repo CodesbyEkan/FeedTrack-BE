@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import { ENV } from '../config/env.js';
+import jwt from "jsonwebtoken";
+import { ENV } from "../config/env.js";
 import { findUserById } from "../services/auth.service.js";
 
 
@@ -16,7 +16,6 @@ export const checkAuth = async (req, res, next) => {
         accessToken = parts[1];
       }
     }
-  
 
   // 2. Fall back to cookie (used by browser clients)
     if (!accessToken && req.cookies?.accessToken) {
@@ -37,11 +36,10 @@ export const checkAuth = async (req, res, next) => {
         success: false,
         message: "User not found",
       });
-
     }
 
     req.user = user;
-    
+
     next();
   } catch (error) {
 
@@ -50,7 +48,6 @@ export const checkAuth = async (req, res, next) => {
       message: "Invalid or expired token",
       error: error.message
     });
-
   }
 };
 
@@ -59,8 +56,10 @@ export const checkAuth = async (req, res, next) => {
 export const roleBasedPermission = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({message: "Forbidden: You don't have access to the resource"});
+      return res
+        .status(403)
+        .json({ message: "Forbidden: You don't have access to the resource" });
     }
     next();
-  }
+  };
 };

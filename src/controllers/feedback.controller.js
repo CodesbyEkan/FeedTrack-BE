@@ -1,9 +1,11 @@
 import asyncHandler from "express-async-handler";
 import Feedback from "../models/feedback.model.js";
+import Staff from "../models/staff.model.js";
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 import Business from "../models/business.model.js";
-import { sendComplaintEmail } from '../utils/sendEmail.js';
+import { sendTemplateMessage } from "../services/whatsapp.service.js";
+import { sendComplaintEmail } from "../utils/sendEmail.js";
 import mongoose from "mongoose";
 
 // create feed back
@@ -13,14 +15,16 @@ export const createFeedback = asyncHandler(async (req, res) => {
 
   // ✅ Validate businessId is a real ObjectId before querying
   if (!businessId || !mongoose.Types.ObjectId.isValid(businessId)) {
-    return res.status(400).json({ success: false, message: "Invalid businessId" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid businessId" });
   }
 
   const feedback = await Feedback.create({
     business: businessId,
     type,
     guestName,
-    message
+    message,
   });
 
   const owner = await User.findOne({ business: businessId, role: "owner" });
@@ -28,7 +32,7 @@ export const createFeedback = asyncHandler(async (req, res) => {
     const notification = await Notification.create({
       recipient: owner._id,
       feedback: feedback._id,
-      type: "new_feedback"
+      type: "new_feedback",
     });
 
     const io = req.app.get("io");
@@ -37,21 +41,24 @@ export const createFeedback = asyncHandler(async (req, res) => {
     // ✅ Also emit new-feedback event so dashboard updates in real time
     io.to(owner._id.toString()).emit("new-feedback", { feedback });
 
-     // Email notification (new)
+    // Email notification (new)
     const business = await Business.findById(businessId);
     sendComplaintEmail({
-      ownerEmail:   owner.email,
-      ownerName:    owner.name,
-      businessName: business?.name || 'Your Business',
-      guestName:    guestName || 'Anonymous',
+      ownerEmail: owner.email,
+      ownerName: owner.name,
+      businessName: business?.name || "Your Business",
+      guestName: guestName || "Anonymous",
       message,
       type,
-    }).catch(err => console.error('Email send failed:', err.message));
+    }).catch((err) => console.error("Email send failed:", err.message));
     // .catch() so a failed email never crashes the response
-  
   }
-  res.status(201).json({ success: true, message: "Feedback submitted successfully", feedback });
-}); 
+  res.status(201).json({
+    success: true,
+    message: "Feedback submitted successfully",
+    feedback,
+  });
+});
 /* export const createFeedback = asyncHandler(async (req, res) => {
   const { businessId, type, guestName, message } = req.body;
 
@@ -91,9 +98,14 @@ io.to(owner._id.toString()).emit("new-notification", notification);
 export const getSingleFeedback = asyncHandler(async (req, res) => {
   const { feedbackId } = req.params;
 
-  const feedback = await Feedback.findById(feedbackId).populate("business", "name");
+  const feedback = await Feedback.findById(feedbackId).populate(
+    "business",
+    "name",
+  );
   if (!feedback) {
-    return res.status(404).json({ success: false, message: "Feedback not found"});
+    return res
+      .status(404)
+      .json({ success: false, message: "Feedback not found" });
   }
 
   res.status(200).json({ success: true, feedback });
@@ -104,7 +116,8 @@ export const getBusinessFeedbacks = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
 
   const feedbacks = await Feedback.find({ business: businessId })
-  .populate("assignedTo", "fullname role").sort({ createdAt: -1 });
+    .populate("assignedTo", "fullname role")
+    .sort({ createdAt: -1 });
 
   //res.status(200).json(feedbacks);
   res.status(200).json({ success: true, count: feedbacks.length, feedbacks });
@@ -116,38 +129,72 @@ export const assignFeedback = asyncHandler(async (req, res) => {
 
   const feedback = await Feedback.findById(feedbackId);
   if (!feedback) {
-    return res.status(404).json({ success: false, message: "Feedback not found"});
+    return res
+      .status(404)
+      .json({ success: false, message: "Feedback not found" });
   }
 
   if (feedback.type !== "complaint") {
-    return res.status(400).json({ success: false, message: "Only complaint can be assigned"});
+    return res
+      .status(400)
+      .json({ success: false, message: "Only complaint can be assigned" });
   }
 
   feedback.assignedTo = staffId;
-  feedback.status = 'in-progress';
+  feedback.status = "in-progress";
   feedback.notes = notes;
 
   await feedback.save();
 
   // FIX: populate from Staff model so fullname is available in response
-  const populatedFeedback = await Feedback.findById(feedback._id)
-    .populate("assignedTo", "fullname role");
-  
+  const populatedFeedback = await Feedback.findById(feedback._id).populate(
+    "assignedTo",
+    "fullname role",
+  );
+
   const io = req.app.get("io");
 
-io.to(feedback.business.toString()).emit("feedback-assigned", feedback);
+  io.to(feedback.business.toString()).emit("feedback-assigned", feedback);
+  const staff = await Staff.findById(staffId);
+  console.log(staff);
+  // {
+  //   _id: new ObjectId('6a314c7067bf894bcd80e53c'),
+  //   business: new ObjectId('6a285c645847eff7974b5f63'),
+  //   fullname: 'Sarah',
+  //   role: 'Manager',
+  //   phoneNumber: '+2347082893494',
+  //   createdAt: 2026-06-16T13:15:28.116Z,
+  //   updatedAt: 2026-06-16T13:15:28.116Z,
+  //   __v: 0
+  // }
+  sendTemplateMessage({
+    phone: staff.phoneNumber,
+    variables: [
+      staff.fullname,
+      feedback._id,
+      feedback.guestName,
+      feedback.type,
+      feedback.status,
+      feedback.message,
+    ],
+  });
 
-
-  res.status(200).json({ success: true, message: "Feedback assigned successfully", feedback});
+  res.status(200).json({
+    success: true,
+    message: "Feedback assigned successfully",
+    feedback,
+  });
 });
 
 // resolve complaint
 export const resolveFeedback = asyncHandler(async (req, res) => {
   const { feedbackId, notes } = req.body;
-  
+
   const feedback = await Feedback.findById(feedbackId);
   if (!feedback) {
-    return res.status(404).json({ success: false, message: "Feedback not found"});
+    return res
+      .status(404)
+      .json({ success: false, message: "Feedback not found" });
   }
 
   feedback.status = "resolved";
@@ -157,30 +204,45 @@ export const resolveFeedback = asyncHandler(async (req, res) => {
   await feedback.save();
   const io = req.app.get("io");
 
-io.to(feedback.business.toString()).emit("feedback-resolved", feedback);
+  io.to(feedback.business.toString()).emit("feedback-resolved", feedback);
 
-
-  res.status(200).json({ success: true, message: "Feedback resolved successfully", feedback});
+  res.status(200).json({
+    success: true,
+    message: "Feedback resolved successfully",
+    feedback,
+  });
 });
 
 // get in-progress complaint
 export const getInProgressComplaints = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
-  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "in-progress" });
+  const complaints = await Feedback.find({
+    business: businessId,
+    type: "complaint",
+    status: "in-progress",
+  });
   res.status(200).json({ success: true, complaints });
 });
 
 // get resolved complaint
 export const getResolvedComplaints = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
-  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "resolved" });
+  const complaints = await Feedback.find({
+    business: businessId,
+    type: "complaint",
+    status: "resolved",
+  });
   res.status(200).json({ success: true, complaints });
 });
 
 // get open complaint
 export const getOpenComplaints = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
-  const complaints = await Feedback.find({ business: businessId, type: "complaint", status: "open" });
+  const complaints = await Feedback.find({
+    business: businessId,
+    type: "complaint",
+    status: "open",
+  });
   res.status(200).json({ success: true, complaints });
 });
 
@@ -188,21 +250,24 @@ export const getOpenComplaints = asyncHandler(async (req, res) => {
 export const getYourStaff = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
 
-  if (!businessId) return res.status(400).json({ success: false, message: "No business found" });
+  if (!businessId)
+    return res
+      .status(400)
+      .json({ success: false, message: "No business found" });
 
-
-      //STAFF
+  //STAFF
   /* const staff= await User.findById(businessId).populate("staff", "name email role");
 
   res.status(200).json({ success: true, staff: business.staff });
 }); */
 
- const staff = await User.find({ business: businessId, role: { $in: ["staff", "manager"] } })
-    .select("name email role");
+  const staff = await User.find({
+    business: businessId,
+    role: { $in: ["staff", "manager"] },
+  }).select("name email role");
 
   res.status(200).json({ success: true, staff });
 });
-
 
 // get business feedback complaint
 // export const getComplaints = asyncHandler(async (req, res) => {
@@ -244,14 +309,20 @@ export const getComplaints = asyncHandler(async (req, res) => {
 // get business feedback compliment
 export const getCompliments = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
-  const compliments = await Feedback.find({ business: businessId, type: "compliment" });
+  const compliments = await Feedback.find({
+    business: businessId,
+    type: "compliment",
+  });
   res.status(200).json({ success: true, compliments });
 });
 
 // get business feedback suggestions
 export const getSuggestions = asyncHandler(async (req, res) => {
   const businessId = req.user.business;
-  const suggestions = await Feedback.find({ business: businessId, type: "suggestion" });
+  const suggestions = await Feedback.find({
+    business: businessId,
+    type: "suggestion",
+  });
   res.status(200).json({ success: true, suggestions });
 });
 

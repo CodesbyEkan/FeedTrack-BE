@@ -13,8 +13,6 @@ import businessRoute from "./routes/bussiness.route.js";
 
 const app = express();
 
-
-
 // middlewares
 
 app.use(cors({
@@ -29,13 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
-
-
-
-
-
-    //Routes
+//Routes
 
 app.get("/", (req, res) => {
   res.send("Welcome to Feedback Management");
@@ -49,6 +41,5 @@ app.use('/api/v1', qrRoute);
 app.use('/api/v1/business', businessRoute); 
 
 app.use(errorHandler);
-
 
 export default app;
