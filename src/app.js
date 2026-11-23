@@ -18,7 +18,7 @@ const app = express();
 // middlewares
 
 app.use(cors({
-  origin: ["https://guestpulse.netlify.app",
+  origin: ["https://feedtrack-fe.onrender.com",
             "http://127.0.0.1:8080",
             ENV.CLIENT_ORIGIN
   ],

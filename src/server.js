@@ -13,7 +13,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [ ENV.CLIENT_ORIGIN || "https://guestpulse.netlify.app",
+    origin: [ ENV.CLIENT_ORIGIN || "https://feedtrack-fe.onrender.com",
       "http://127.0.0.1:8080"
     ],
 
