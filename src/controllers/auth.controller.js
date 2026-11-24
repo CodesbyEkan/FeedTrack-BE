@@ -7,6 +7,7 @@ import Business from "../models/business.model.js";
 import Staff from "../models/staff.model.js";
 import crypto from "crypto";
 import User from "../models/user.model.js";
+import { sendMail } from "../utils/brevoMail.js"
 
 
 
@@ -204,6 +205,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
+    /*
     await transporter.sendMail({
       from:    `"GuestPulse" <${ENV.EMAIL_USER}>`,
       to:      user.email,
@@ -215,11 +217,24 @@ export const forgotPassword = asyncHandler(async (req, res) => {
         <p>If you didn't request this, ignore this email.</p>
       `,
     });
+    */
 
+    await sendMail({
+      to: user.email,
+      toName: user.name,
+      subject: "Reset your password",
+      html: `
+        <p>Hi ${user.name || "there"},</p>
+        <p>Click below to reset your password — link expires in <strong>1 hour</strong>.</p>
+        <p><a href="${resetUrl}">Reset my password</a></p>
+        <p>If you didn't request this, ignore this email.</p>
+      `,
+    });
     res.status(200).json({ message: SAME_MSG });
 
   } catch (err) {
     console.error('forgot-password:', err);
+    console.error('forgot-password:', err.response?.data || err);
     res.status(500).json({ message: 'Could not send reset email. Please try again.' });
   }
   });

@@ -19,4 +19,6 @@ export const ENV = {
   WABA_ID: process.env.WABA_ID,
   WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
   WHATSAPP_API_VERSION: process.env.WHATSAPP_API_VERSION,
+  BREVO_API_KEY: process.env.BREVO_API_KEY,
+  MAIL_FROM: process.env.MAIL_FROM,
 };

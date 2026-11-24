@@ -1,9 +1,10 @@
 import { ENV } from '../config/env.js';
-import { transporter } from '../config/transporter.js';
+// import { transporter } from '../config/transporter.js';
+import { sendMail } from "./brevoMail.js";
 
 export const sendComplaintEmail = async ({ ownerEmail, ownerName, businessName, guestName, message, type }) => {
   const mailOptions = {
-    from: `"GuestPulse" <${ENV.EMAIL_USER}>`,
+    // from: `"GuestPulse" <${ENV.EMAIL_USER}>`,
     to: ownerEmail,
     subject: `New ${type} received — ${businessName}`,
     html: `
@@ -50,5 +51,11 @@ export const sendComplaintEmail = async ({ ownerEmail, ownerName, businessName, 
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  // await transporter.sendMail(mailOptions);
+  await sendMail({
+    to: ownerEmail,
+    toName: ownerName,
+    subject: mailOptions.subject,
+    html: mailOptions.html,
+  });
 };
