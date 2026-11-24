@@ -203,7 +203,8 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     user.resetPasswordExpires = expires;
     await user.save();
 
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    //const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/?token=${token}`;
 
     /*
     await transporter.sendMail({
