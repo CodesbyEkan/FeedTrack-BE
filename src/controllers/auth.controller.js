@@ -160,10 +160,14 @@ export const login = asyncHandler(async (req, res) => {
 
 // logout user
 export const logout = asyncHandler(async (req, res) => {
+
+  //newly added
+  const isProd = ENV.NODE_ENV !== "development";
+
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: ENV.NODE_ENV !== "development",
-    sameSite: "strict",
+    secure: isProd,
+    sameSite: isProd ? "none" : "strict",
   });
 
   res.status(200).json({ success: true, message: "Logged out successfully" });
