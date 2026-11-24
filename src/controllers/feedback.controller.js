@@ -140,6 +140,14 @@ export const assignFeedback = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Only complaint can be assigned" });
   }
 
+  //staff test
+  const staff = await Staff.findById(staffId);
+  if (!staff) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Staff member not found" });
+  }
+
   feedback.assignedTo = staffId;
   feedback.status = "in-progress";
   feedback.notes = notes;
@@ -155,7 +163,7 @@ export const assignFeedback = asyncHandler(async (req, res) => {
   const io = req.app.get("io");
 
   io.to(feedback.business.toString()).emit("feedback-assigned", feedback);
-  const staff = await Staff.findById(staffId);
+  // const staff = await Staff.findById(staffId);
   console.log(staff);
   // {
   //   _id: new ObjectId('6a314c7067bf894bcd80e53c'),
