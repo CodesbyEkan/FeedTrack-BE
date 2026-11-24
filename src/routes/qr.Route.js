@@ -13,7 +13,7 @@ router.get("/qr/:businessId", async (req, res) => {
   }
 
   try {
-     const BASE_URL = ENV.CLIENT_ORIGIN || "https://guestpulse.netlify.app";
+     const BASE_URL = "https://feedtrack-fe.onrender.com" || ENV.CLIENT_ORIGIN;
     const requiredUrl = `${BASE_URL}/?businessId=${encodeURIComponent(businessId)}`;
     const qrCode = await generateQRCode(requiredUrl);
 
