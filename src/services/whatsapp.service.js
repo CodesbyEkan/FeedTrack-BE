@@ -34,7 +34,8 @@ export async function sendTemplateMessage({ phone, variables }) {
 
           parameters: variables.map((value) => ({
             type: "text",
-            text: String(value),
+            // text: String(value),
+              text: String(value).replace(/\s+/g, " ").trim(),
           })),
         },
       ],
